@@ -1,9 +1,14 @@
 'use client';
+
+// next imports
 import { Roboto } from 'next/font/google';
+
+// ui imports
 import { createTheme } from '@mui/material/styles';
 
+// default font config
 const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
+  weight: ['300', '400', '500', '700', '900'],
   subsets: ['latin'],
   display: 'swap',
 });
@@ -11,9 +16,6 @@ const roboto = Roboto({
 const theme = createTheme({
   typography: {
     fontFamily: roboto.style.fontFamily,
-    h1: {
-      fontSize: '2rem',
-    }
   },
 });
 

@@ -1,26 +1,30 @@
 "use client";
 
+// web3 imports
 import {
   useConnectModal,
-  useAccountModal,
   useChainModal,
 } from "@rainbow-me/rainbowkit";
 import { useAccount, useDisconnect } from "wagmi";
 
+// ui components
+import Button from '@mui/material/Button';
+import Fingerprint from '@mui/icons-material/Fingerprint';
+
 export const ConnectButton = () => {
   // account state
-  const { isConnecting, address, isConnected, chain } = useAccount();
+  const { isConnecting, isConnected, chain } = useAccount();
 
   // web3 hooks
   const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
   const { openChainModal } = useChainModal();
   const { disconnect } = useDisconnect();
 
   // state machine for connection
   if (!isConnected) {
     return (
-      <button
+      <Button
+        variant="contained"
         onClick={async () => {
           if (isConnected) {
             disconnect();
@@ -28,31 +32,23 @@ export const ConnectButton = () => {
           openConnectModal?.();
         }}
         disabled={isConnecting}
+        endIcon={<Fingerprint />}
       >
         { isConnecting ? 'Connecting...' : 'Connect your wallet' }
-      </button>
+      </Button>
     );
   }
 
   if (isConnected && !chain) {
     return (
-      <button onClick={openChainModal}>
+      <Button variant="contained" onClick={openChainModal}>
         Wrong network
-      </button>
+      </Button>
     );
   }
 
   // default view
   return (
-    <div>
-      <div
-        onClick={async () => openAccountModal?.()}
-      >
-        <p>Account</p>
-      </div>
-      <button onClick={openChainModal}>
-        Switch Networks
-      </button>
-    </div>
+    <Button disabled variant="contained" endIcon={<Fingerprint />}>Connected</Button>
   );
 };

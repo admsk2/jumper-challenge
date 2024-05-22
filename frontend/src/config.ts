@@ -1,8 +1,11 @@
 'use client';
-import { http, createStorage, createConfig, cookieStorage } from 'wagmi'
-import { mainnet, sepolia } from 'wagmi/chains'
-import { Chain, getDefaultConfig } from '@rainbow-me/rainbowkit'
 
+// web3 imports
+import { http, createStorage, cookieStorage } from 'wagmi'
+import { mainnet, sepolia } from 'wagmi/chains'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+
+// config
 const projectId = 'YOUR_PROJECT_ID';
 
 export const config = getDefaultConfig({
