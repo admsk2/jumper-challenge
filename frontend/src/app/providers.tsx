@@ -2,8 +2,8 @@
 
 import { WagmiProvider, cookieToInitialState } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
-
+import "@rainbow-me/rainbowkit/styles.css";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { config } from "@/config";
 
 const queryClient = new QueryClient();
@@ -18,17 +18,12 @@ export default function Providers({ children, cookie }: Props) {
     return (
     <WagmiProvider config={config} initialState={initialState}>
         <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-            theme={darkTheme({
-                accentColor: "#0E76FD",
-                accentColorForeground: "white",
-                borderRadius: "large",
-                fontStack: "system",
-                overlayBlur: "small",
-            })}
+            <RainbowKitProvider
+                modalSize="compact"
+                initialChain={5}
             >
-            {children}
-        </RainbowKitProvider>
+                {children}
+            </RainbowKitProvider>
         </QueryClientProvider>
     </WagmiProvider>
     );
