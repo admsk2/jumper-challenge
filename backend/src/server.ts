@@ -5,7 +5,10 @@ import helmet from 'helmet';
 import { pino } from 'pino';
 
 import { generateNonceRouter } from '@/api/generateNonce/generateNonceRouter';
+import { getUserRouter } from '@/api/getUser/getUserRouter';
 import { healthCheckRouter } from '@/api/healthCheck/healthCheckRouter';
+import { logoutRouter } from '@/api/logout/logoutRouter';
+import { verifySignatureRouter } from '@/api/verifySignature/verifySignatureRouter';
 import { openAPIRouter } from '@/api-docs/openAPIRouter';
 import errorHandler from '@/common/middleware/errorHandler';
 import rateLimiter from '@/common/middleware/rateLimiter';
@@ -19,6 +22,7 @@ const app: Express = express();
 app.set('trust proxy', true);
 
 // Middlewares
+app.use(express.json());
 app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(helmet());
 app.use(rateLimiter);
@@ -37,6 +41,9 @@ app.use(requestLogger);
 // Routes
 app.use('/health-check', healthCheckRouter);
 app.use('/nonce', generateNonceRouter);
+app.use('/user', getUserRouter);
+app.use('/logout', logoutRouter);
+app.use('/verify', verifySignatureRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

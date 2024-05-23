@@ -1,42 +1,40 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import express, { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { generateNonce } from 'siwe';
 import { z } from 'zod';
 
 import { createApiResponse } from '@/api-docs/openAPIResponseBuilders';
 import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse';
 import { handleServiceResponse } from '@/common/utils/httpHandlers';
 
-export const generateNonceRegistry = new OpenAPIRegistry();
+export const logoutRegistry = new OpenAPIRegistry();
 
-export const generateNonceRouter: Router = (() => {
+export const logoutRouter: Router = (() => {
   const router = express.Router();
 
-  generateNonceRegistry.registerPath({
+  logoutRegistry.registerPath({
     method: 'get',
-    path: '/nonce',
-    tags: ['Generate Nonce'],
+    path: '/logout',
+    tags: ['Logout'],
     responses: createApiResponse(z.null(), 'Success'),
   });
 
   router.get('/', (req: Request, res: Response) => {
     try {
-      (req.session as any).nonce = generateNonce();
-      req.session.save();
-
-      const serviceResponse = new ServiceResponse<string>(
-        ResponseStatus.Success,
-        'Nonce generated successfully',
-        (req.session as any).nonce,
-        StatusCodes.OK
-      );
-      handleServiceResponse(serviceResponse, res);
+      req.session.destroy(() => {
+        const serviceResponse = new ServiceResponse<null>(
+          ResponseStatus.Success,
+          'User logged out successfully',
+          null,
+          StatusCodes.OK
+        );
+        handleServiceResponse(serviceResponse, res);
+      });
     } catch (error) {
       const errorMsg = (error as any).message;
       const serviceResponse = new ServiceResponse<string>(
         ResponseStatus.Failed,
-        'Nonce generation error',
+        'Error logging out user',
         errorMsg,
         StatusCodes.INTERNAL_SERVER_ERROR
       );

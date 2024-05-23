@@ -1,42 +1,49 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import express, { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { generateNonce } from 'siwe';
 import { z } from 'zod';
 
 import { createApiResponse } from '@/api-docs/openAPIResponseBuilders';
 import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse';
 import { handleServiceResponse } from '@/common/utils/httpHandlers';
 
-export const generateNonceRegistry = new OpenAPIRegistry();
+export const getUserRegistry = new OpenAPIRegistry();
 
-export const generateNonceRouter: Router = (() => {
+export const getUserRouter: Router = (() => {
   const router = express.Router();
 
-  generateNonceRegistry.registerPath({
+  getUserRegistry.registerPath({
     method: 'get',
-    path: '/nonce',
-    tags: ['Generate Nonce'],
+    path: '/user',
+    tags: ['Get User'],
     responses: createApiResponse(z.null(), 'Success'),
   });
 
   router.get('/', (req: Request, res: Response) => {
     try {
-      (req.session as any).nonce = generateNonce();
-      req.session.save();
-
-      const serviceResponse = new ServiceResponse<string>(
-        ResponseStatus.Success,
-        'Nonce generated successfully',
-        (req.session as any).nonce,
-        StatusCodes.OK
-      );
-      handleServiceResponse(serviceResponse, res);
+      const address = (req.session as any).siwe?.data.address;
+      if (address) {
+        const serviceResponse = new ServiceResponse<string>(
+          ResponseStatus.Success,
+          'User retrieved successfully',
+          address,
+          StatusCodes.OK
+        );
+        handleServiceResponse(serviceResponse, res);
+      } else {
+        const serviceResponse = new ServiceResponse<null>(
+          ResponseStatus.Failed,
+          'User not found',
+          null,
+          StatusCodes.NOT_FOUND
+        );
+        handleServiceResponse(serviceResponse, res);
+      }
     } catch (error) {
       const errorMsg = (error as any).message;
       const serviceResponse = new ServiceResponse<string>(
         ResponseStatus.Failed,
-        'Nonce generation error',
+        'Error retrieving user',
         errorMsg,
         StatusCodes.INTERNAL_SERVER_ERROR
       );

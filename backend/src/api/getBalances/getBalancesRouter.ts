@@ -1,34 +1,47 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import express, { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { generateNonce } from 'siwe';
 import { z } from 'zod';
 
 import { createApiResponse } from '@/api-docs/openAPIResponseBuilders';
 import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse';
+import { isValidEthereumAddress } from '@/common/utils/commonValidation';
 import { handleServiceResponse } from '@/common/utils/httpHandlers';
 
-export const generateNonceRegistry = new OpenAPIRegistry();
+export const getBalancesRegistry = new OpenAPIRegistry();
 
-export const generateNonceRouter: Router = (() => {
+export const getBalancesRouter: Router = (() => {
   const router = express.Router();
 
-  generateNonceRegistry.registerPath({
-    method: 'get',
-    path: '/nonce',
-    tags: ['Generate Nonce'],
+  getBalancesRegistry.registerPath({
+    method: 'post',
+    path: '/balances',
+    tags: ['Get Address Balances'],
     responses: createApiResponse(z.null(), 'Success'),
   });
 
   router.get('/', (req: Request, res: Response) => {
     try {
-      (req.session as any).nonce = generateNonce();
-      req.session.save();
+      const { address } = req.body;
+      const isValidAddress = isValidEthereumAddress(address);
+      if (!isValidAddress) {
+        const serviceResponse = new ServiceResponse<string>(
+          ResponseStatus.Failed,
+          'Invalid ethereum address',
+          address,
+          StatusCodes.BAD_REQUEST
+        );
+        handleServiceResponse(serviceResponse, res);
+      }
 
-      const serviceResponse = new ServiceResponse<string>(
+      // fetch tokens balances
+
+      const tokenBalances = {};
+
+      const serviceResponse = new ServiceResponse<any>(
         ResponseStatus.Success,
-        'Nonce generated successfully',
-        (req.session as any).nonce,
+        'Token balances retrieved successfully',
+        tokenBalances,
         StatusCodes.OK
       );
       handleServiceResponse(serviceResponse, res);
@@ -36,7 +49,7 @@ export const generateNonceRouter: Router = (() => {
       const errorMsg = (error as any).message;
       const serviceResponse = new ServiceResponse<string>(
         ResponseStatus.Failed,
-        'Nonce generation error',
+        'Error retrieving user',
         errorMsg,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
