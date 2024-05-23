@@ -1,8 +1,10 @@
 import cors from 'cors';
 import express, { Express } from 'express';
+import session from 'express-session';
 import helmet from 'helmet';
 import { pino } from 'pino';
 
+import { generateNonceRouter } from '@/api/generateNonce/generateNonceRouter';
 import { healthCheckRouter } from '@/api/healthCheck/healthCheckRouter';
 import { openAPIRouter } from '@/api-docs/openAPIRouter';
 import errorHandler from '@/common/middleware/errorHandler';
@@ -20,12 +22,21 @@ app.set('trust proxy', true);
 app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(helmet());
 app.use(rateLimiter);
+app.use(
+  session({
+    secret: 'jungle_is_massive',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+);
 
 // Request logging
 app.use(requestLogger);
 
 // Routes
 app.use('/health-check', healthCheckRouter);
+app.use('/nonce', generateNonceRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
