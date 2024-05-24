@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { ethers } from 'ethers';
 
+import { env } from '@/common/utils/envConfig';
 import { TokenData } from '@/types/TokenTypes';
 
-const ETHERSCAN_API_KEY = '#';
+const ETHERSCAN_API_KEY = env.ETHERSCAN_API;
 const ETHERSCAN_BASE_URL = 'https://api.etherscan.io/api';
 /**
  * Retrieves a list of ERC-20 tokens for a given address on a specified chain.
