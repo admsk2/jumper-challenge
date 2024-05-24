@@ -51,7 +51,6 @@ export const getBalancesRouter: Router = (() => {
       }
 
       // fetch tokens balances
-
       const tokensData: TokenData[] = await getERC20Tokens(address, 'mainnet');
 
       const serviceResponse = new ServiceResponse<string>(
@@ -62,7 +61,6 @@ export const getBalancesRouter: Router = (() => {
       );
       handleServiceResponse(serviceResponse, res);
     } catch (error) {
-      console.log(error);
       const errorMsg = (error as any).message;
       const serviceResponse = new ServiceResponse<string>(
         ResponseStatus.Failed,
