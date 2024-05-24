@@ -17,6 +17,20 @@ export const verifySignatureRouter: Router = (() => {
     method: 'post',
     path: '/verify',
     tags: ['Verify Signature'],
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+              signature: { type: 'string' },
+            },
+            required: ['address'],
+          },
+        },
+      },
+    },
     responses: createApiResponse(z.null(), 'Success'),
   });
 
@@ -34,6 +48,7 @@ export const verifySignatureRouter: Router = (() => {
           StatusCodes.UNPROCESSABLE_ENTITY
         );
         handleServiceResponse(serviceResponse, res);
+        return;
       }
 
       const serviceResponse = new ServiceResponse<null>(

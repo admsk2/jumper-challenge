@@ -1,17 +1,18 @@
 import axios from 'axios';
 import { ethers } from 'ethers';
 
-const ETHERSCAN_API_KEY = 'your_etherscan_api_key';
-const ETHERSCAN_BASE_URL = 'https://api.etherscan.io/api';
+import { TokenData } from '@/types/TokenTypes';
 
+const ETHERSCAN_API_KEY = '#';
+const ETHERSCAN_BASE_URL = 'https://api.etherscan.io/api';
 /**
  * Retrieves a list of ERC-20 tokens for a given address on a specified chain.
  * @param address - The address to query.
  * @param chain - The Ethereum chain (mainnet, ropsten, etc.).
  * @returns A promise that resolves to an array of token details.
  */
-export async function getERC20Tokens(address: string, chain: string): Promise<any[]> {
-  const provider = ethers.getDefaultProvider(chain);
+export async function getERC20Tokens(address: string, chain: string): Promise<TokenData[]> {
+  const provider: ethers.AbstractProvider = ethers.getDefaultProvider(chain);
 
   // Fetch token balances from Etherscan API
   const response = await axios.get(ETHERSCAN_BASE_URL, {
@@ -36,9 +37,9 @@ export async function getERC20Tokens(address: string, chain: string): Promise<an
   const tokenContracts = [...new Set(tokenTransactions.map((tx: any) => tx.contractAddress))];
 
   // Fetch token details
-  const tokenDetailsPromises = tokenContracts.map(async (contractAddress) => {
-    const contract = new ethers.Contract(
-      contractAddress as any,
+  const tokenDetailsPromises = tokenContracts.map(async (contractAddress): Promise<TokenData | null> => {
+    const contract: ethers.Contract = new ethers.Contract(
+      contractAddress as string,
       [
         'function name() view returns (string)',
         'function symbol() view returns (string)',
@@ -55,14 +56,23 @@ export async function getERC20Tokens(address: string, chain: string): Promise<an
       contract.balanceOf(address),
     ]);
 
+    const formattedBalance: string = (ethers as any).formatUnits(balance, decimals);
+
+    // either string comparison or parseFloat
+    if (formattedBalance === '0.0') {
+      return null;
+    }
+
+    // return TokenData object
     return {
-      contractAddress,
       name,
       symbol,
-      decimals,
-      balance: (ethers as any).utils.formatUnits(balance, decimals),
+      balance: (ethers as any).formatUnits(balance, decimals),
     };
   });
 
-  return Promise.all(tokenDetailsPromises);
+  const tokensListRaw: (TokenData | null)[] = await Promise.all(tokenDetailsPromises);
+  const tokensList: TokenData[] = tokensListRaw.filter((token): token is TokenData => token !== null);
+
+  return tokensList;
 }

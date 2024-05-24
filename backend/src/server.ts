@@ -15,6 +15,8 @@ import rateLimiter from '@/common/middleware/rateLimiter';
 import requestLogger from '@/common/middleware/requestLogger';
 import { env } from '@/common/utils/envConfig';
 
+import { getBalancesRouter } from './api/getBalances/getBalancesRouter';
+
 const logger = pino({ name: 'server start' });
 const app: Express = express();
 
@@ -44,6 +46,7 @@ app.use('/nonce', generateNonceRouter);
 app.use('/user', getUserRouter);
 app.use('/logout', logoutRouter);
 app.use('/verify', verifySignatureRouter);
+app.use('/balances', getBalancesRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
