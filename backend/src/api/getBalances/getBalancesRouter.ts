@@ -16,28 +16,15 @@ export const getBalancesRouter: Router = (() => {
   const router = express.Router();
 
   getBalancesRegistry.registerPath({
-    method: 'post',
+    method: 'get',
     path: '/balances',
     tags: ['Get Address Balances'],
-    requestBody: {
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              address: { type: 'string' },
-            },
-            required: ['address'],
-          },
-        },
-      },
-    },
     responses: createApiResponse(z.null(), 'Success'),
   });
 
-  router.post('/', async (req: Request, res: Response) => {
+  router.get('/:address', async (req: Request, res: Response) => {
     try {
-      const { address } = req.body;
+      const { address } = req.params;
       const isValidAddress = isValidEthereumAddress(address);
       if (!isValidAddress) {
         const serviceResponse = new ServiceResponse<string>(

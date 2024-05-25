@@ -1,9 +1,11 @@
 // ui components
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 // internal components
-import { ConnectButton } from "./components/button";
+import ConnectButton from "./components/button";
+import SignInButton from "./components/signin";
 import Profile from "./components/profile";
 
 export default function Home() {
@@ -39,7 +41,10 @@ export default function Home() {
           <Typography variant="body1" fontSize={'1.15rem'} mb={4} color={'gray'}>
             You are just one click away. Connect your wallet to get started.
           </Typography>
-          <ConnectButton />
+          <Stack direction="row" spacing={2}>
+            <ConnectButton />
+            <SignInButton />
+          </Stack>
         </Grid>
         <Grid
           xs={6}

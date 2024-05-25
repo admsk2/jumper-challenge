@@ -9,9 +9,10 @@ import { useAccount, useDisconnect } from "wagmi";
 
 // ui components
 import Button from '@mui/material/Button';
-import Fingerprint from '@mui/icons-material/Fingerprint';
+import CableIcon from '@mui/icons-material/Cable';
+import WifiOffIcon from '@mui/icons-material/WifiOff';
 
-export const ConnectButton = () => {
+export default function ConnectButton() {
   // account state
   const { isConnecting, isConnected, chain } = useAccount();
 
@@ -32,7 +33,7 @@ export const ConnectButton = () => {
           openConnectModal?.();
         }}
         disabled={isConnecting}
-        endIcon={<Fingerprint />}
+        endIcon={<CableIcon />}
       >
         { isConnecting ? 'Connecting...' : 'Connect your wallet' }
       </Button>
@@ -41,7 +42,7 @@ export const ConnectButton = () => {
 
   if (isConnected && !chain) {
     return (
-      <Button variant="contained" onClick={openChainModal}>
+      <Button variant="contained" color="error" onClick={openChainModal} endIcon={<WifiOffIcon />}>
         Wrong network
       </Button>
     );
@@ -49,6 +50,6 @@ export const ConnectButton = () => {
 
   // default view
   return (
-    <Button disabled variant="contained" endIcon={<Fingerprint />}>Connected</Button>
+    <Button disabled variant="contained" endIcon={<CableIcon />}>Connected</Button>
   );
 };

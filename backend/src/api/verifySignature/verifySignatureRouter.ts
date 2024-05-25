@@ -51,6 +51,9 @@ export const verifySignatureRouter: Router = (() => {
         return;
       }
 
+      (req.session as any).siwe = fields;
+      req.session.save();
+
       const serviceResponse = new ServiceResponse<null>(
         ResponseStatus.Success,
         'Signature verified successfully',

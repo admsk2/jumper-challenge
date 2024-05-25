@@ -24,7 +24,6 @@ const app: Express = express();
 app.set('trust proxy', true);
 
 // Middlewares
-app.use(express.json());
 app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(helmet());
 app.use(rateLimiter);
@@ -33,9 +32,11 @@ app.use(
     secret: 'jungle_is_massive',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true },
+    cookie: { secure: false },
   })
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Request logging
 app.use(requestLogger);

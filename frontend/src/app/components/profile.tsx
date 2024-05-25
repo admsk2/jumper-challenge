@@ -1,5 +1,8 @@
 "use client";
 
+// next imports
+import { useEffect, useState } from "react";
+
 // web3 imports
 import { useAccount, useBalance, useEnsName } from "wagmi";
 import { formatUnits } from "viem";
@@ -8,10 +11,11 @@ import { formatUnits } from "viem";
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Tooltip from '@mui/material/Tooltip';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+
 
 // internal components
 import { Account } from "./account";
@@ -20,7 +24,9 @@ import { formatEthereumAddress } from "@/lib/utils";
 export default function Profile() {
   // account state
   const { address, chain, isConnected } = useAccount();
-  
+
+  // internal state
+  const [userBalances, setUserBalances] = useState([]);
 
   // web3 hooks
   const { data } = useBalance({
@@ -30,6 +36,26 @@ export default function Profile() {
   const ens = useEnsName({
     address,
   });
+
+  // custom hook
+  useEffect(() => {
+    const handler = async () => {
+        try {
+            const balancesRes = await fetch(`http://localhost:8080/balances/${address}`, {
+                method: 'GET',
+                credentials: 'include',
+            })
+            const balancesResJson = await balancesRes.json()
+            const userBalancesRaw = await balancesResJson.responseObject
+            const userBalancesFormatted = JSON.parse(userBalancesRaw)
+            setUserBalances(userBalancesFormatted)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    // 1. page loads
+    handler()
+}, [address])
 
   // state machine for connection
   if (!isConnected) {
@@ -44,47 +70,41 @@ export default function Profile() {
 
   // default view
   return (
-    <Card sx={{ width: 350 }}>
-      <CardContent>
-        {address ?
-          <Tooltip title={address}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              {formatEthereumAddress(address)}
-            </Typography>
-          </Tooltip> :
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            -
-          </Typography>
-        }
-        {data ?
-          <Typography variant="h5" component="div">
-            {Number(formatUnits(data.value, data.decimals)).toFixed(4)}{" "}
-            {data.symbol}
-          </Typography> :
-          <Typography variant="h5" component="div">
-            -
-          </Typography>
-        }
-        {chain?.name ?
-          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            {chain?.name}
-          </Typography> :
-          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            -
-          </Typography>
-        }
-        {ens.data ?
-          <Typography variant="body2">
-            {ens.data}
-          </Typography> :
-          <Typography variant="body2">
-            No ENS name for given wallet 🧐            
-          </Typography>
-        }
-      </CardContent>
-      <CardActions>
-        <Account />
-      </CardActions>
-    </Card>
+    <Grid container>
+      <Grid item xs={12} md={6}>
+        <Card>
+          <CardContent>
+            {address ?
+              <Tooltip title={address}>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                  {formatEthereumAddress(address)}{ens.data && `• (${ens.data})`}
+                </Typography>
+              </Tooltip> :
+              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                -
+              </Typography>
+            }
+            {data ?
+              <Typography variant="h5" component="div">
+                {Number(formatUnits(data.value, data.decimals)).toFixed(4)}{" "}
+                {data.symbol}
+              </Typography> :
+              <Typography variant="h5" component="div">
+                -
+              </Typography>
+            }
+            {chain?.name ?
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                {chain?.name}
+              </Typography> :
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                -
+              </Typography>
+            }
+            <Account tokensList={userBalances} />
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   );
 }

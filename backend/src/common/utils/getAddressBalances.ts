@@ -73,7 +73,9 @@ export async function getERC20Tokens(address: string, chain: string): Promise<To
   });
 
   const tokensListRaw: (TokenData | null)[] = await Promise.all(tokenDetailsPromises);
-  const tokensList: TokenData[] = tokensListRaw.filter((token): token is TokenData => token !== null);
+  const tokensList: TokenData[] = tokensListRaw.filter(
+    (token): token is TokenData => token !== null && token.symbol.length < 10
+  );
 
   return tokensList;
 }
