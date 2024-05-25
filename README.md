@@ -1,15 +1,38 @@
 # Jumper challenge
 
-## Getting start
+## Setup
 
-There's 2 directories into this repository with a README.md for each of those to have more informations about their respective setup.
+Make sure you have `node` and `yarn` installed.
 
-### frontend
+Makefile is the entry point for all commands.
 
-classic nextjs implementation within the material ui 5 setup.
+Frontend app is accessible at `http://localhost:3000`.<br>
+Backend app is accessible at `http://localhost:8080`.
 
-### backend
+Install dependencies:
 
-expressjs 4 with some default routes and examples.
+```sh
+make install
+```
 
-## Enjoy!
+Run development server:
+
+```sh
+make dev
+```
+
+Run build:
+
+```sh
+make build
+```
+
+Run production server:
+
+```sh
+make start
+```
+
+Make sure `.env` file in backend is setup correctly.
+
+---
