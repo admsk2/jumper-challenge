@@ -22,7 +22,7 @@ import WalletIcon from '@mui/icons-material/Wallet';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
-export const Account = ({ tokensList }) => {
+export const Account = ({ tokensList }: { tokensList: any[] }) => {
   // web3 hooks
   const { openAccountModal } = useAccountModal();
   const { openChainModal } = useChainModal();

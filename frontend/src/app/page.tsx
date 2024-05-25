@@ -1,16 +1,42 @@
+"use client";
+
 // ui components
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 // internal components
 import ConnectButton from "./components/button";
 import SignInButton from "./components/signin";
 import Profile from "./components/profile";
+import { useState } from 'react';
 
 export default function Home() {
+  // internal state
+  const [state, setState] = useState<{ open: boolean; errorMessage: string | null }>({
+    open: false,
+    errorMessage: null,
+  });
+
+  const setOpen = (open: boolean, errorMessage: string | null) => {
+    setState({ open, errorMessage });
+  };
+
+  // Example usage
+  const handleOpen = (message: string) => setOpen(true, message);
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false, null);
+  }
+
   // default view
   return (
+    <>
       <Grid
         container
         spacing={2}
@@ -43,15 +69,26 @@ export default function Home() {
           </Typography>
           <Stack direction="row" spacing={2}>
             <ConnectButton />
-            <SignInButton />
+            <SignInButton onError={(message: string) => handleOpen(message)} />
           </Stack>
         </Grid>
         <Grid
           xs={6}
           md={5}
         >
-          <Profile />
+          <Profile onError={(message: string) => handleOpen(message)} />
         </Grid>
       </Grid>
+      <Snackbar open={state.open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {state.errorMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 }

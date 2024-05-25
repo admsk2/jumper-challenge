@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 // next imports
@@ -21,7 +22,7 @@ import Grid from '@mui/material/Grid';
 import { Account } from "./account";
 import { formatEthereumAddress } from "@/lib/utils";
 
-export default function Profile() {
+export default function Profile({ onError }: { onError: any }) {
   // account state
   const { address, chain, isConnected } = useAccount();
 
@@ -40,18 +41,19 @@ export default function Profile() {
   // custom hook
   useEffect(() => {
     const handler = async () => {
-        try {
-            const balancesRes = await fetch(`http://localhost:8080/balances/${address}`, {
-                method: 'GET',
-                credentials: 'include',
-            })
-            const balancesResJson = await balancesRes.json()
-            const userBalancesRaw = await balancesResJson.responseObject
-            const userBalancesFormatted = JSON.parse(userBalancesRaw)
-            setUserBalances(userBalancesFormatted)
-        } catch (error) {
-            console.log(error);
-        }
+      if (!address) return
+      try {
+        const balancesRes = await fetch(`http://localhost:8080/balances/${address}`, {
+          method: 'GET',
+          credentials: 'include',
+        })
+        const balancesResJson = await balancesRes.json()
+        const userBalancesRaw = await balancesResJson.responseObject
+        const userBalancesFormatted = JSON.parse(userBalancesRaw)
+        setUserBalances(userBalancesFormatted)
+      } catch (error) {
+        onError('Error fetching balances. Tokens list not available.')
+      }
     }
     // 1. page loads
     handler()

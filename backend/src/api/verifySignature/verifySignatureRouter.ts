@@ -36,7 +36,7 @@ export const verifySignatureRouter: Router = (() => {
 
   router.post('/', async (req: Request, res: Response) => {
     try {
-      const { message, signature } = req.body;
+      const { message, signature }: { message: string; signature: string } = req.body;
       const siweMessage = new SiweMessage(message);
       const fields = await siweMessage.verify({ signature });
 

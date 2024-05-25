@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 // next imports
@@ -9,11 +10,10 @@ import { SiweMessage } from 'siwe'
 
 // ui components
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 
-export default function SignInButton() {
+export default function SignInButton({ onError }: { onError: any }) {
     // account state
     const { isConnected, chain, address } = useAccount();
     // wagmi hook
@@ -58,13 +58,13 @@ export default function SignInButton() {
             const verifyResJson = await verifyRes.json()
 
             if (!verifyResJson.success) {
-                throw new Error(`Error verifying message: ${verifyResJson.message}`)
+                onError(verifyResJson.message)
             }
 
             setLoading(false)
             setVerified(true)
         } catch (error) {
-            console.log(error)
+            onError((error as any).message)
             setLoading(false)
         }
     }
@@ -80,7 +80,7 @@ export default function SignInButton() {
             setVerified(false)
             window.location.reload()
         } catch (error) {
-            console.log(error);
+            onError((error as any).message)
         }
     }
 
@@ -96,7 +96,7 @@ export default function SignInButton() {
                 const nonceValue = await nonceResJson.responseObject
                 setNonce(nonceValue)
             } catch (error) {
-                console.log(error);
+                onError((error as any).message)
             }
         }
         // 1. page loads
@@ -106,6 +106,7 @@ export default function SignInButton() {
     // pre-fetch user
     useEffect(() => {
         const handler = async () => {
+            if (!verified) return
             try {
                 const userRes = await fetch('http://localhost:8080/user', {
                     method: 'GET',
@@ -115,17 +116,17 @@ export default function SignInButton() {
                 if (userResJson.success) {
                     const authenticatedAddress = userResJson.responseObject
                     if (authenticatedAddress !== address) {
-                        throw new Error(`Error fetching user: User address mismatch`)
+                        onError('Error fetching user: User address mismatch')
                     } else {
                         setAuthenticated(true)
                     }
                 } else {
                     if (userResJson.statusCode !== 404) {
-                        throw new Error(`Error authenticating user: ${userResJson.message}`)
+                        onError(`Error fetching user: ${userResJson.message}`)
                     }
                 }
             } catch (error) {
-                console.log(error);
+                onError((error as any).message)
             }
         }
         // 1. page loads
@@ -133,7 +134,7 @@ export default function SignInButton() {
     }, [verified, address])
 
     if (loading) {
-        return <Button disabled><CircularProgress size={20} /></Button>
+        return <Button disabled variant="contained" endIcon={<FingerprintIcon />}>Logging In...</Button>
     }
 
     if (isConnected && chain) {

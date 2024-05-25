@@ -32,7 +32,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <Providers cookie={cookie}>{children}</Providers>
+            <Providers cookie={cookie}>
+              {children}
+            </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
         </body>

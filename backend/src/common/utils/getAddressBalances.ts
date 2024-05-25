@@ -2,10 +2,11 @@ import axios from 'axios';
 import { ethers } from 'ethers';
 
 import { env } from '@/common/utils/envConfig';
-import { TokenData } from '@/types/TokenTypes';
+import { TokenData } from '@/types/tokenTypes';
 
 const ETHERSCAN_API_KEY = env.ETHERSCAN_API;
 const ETHERSCAN_BASE_URL = 'https://api.etherscan.io/api';
+
 /**
  * Retrieves a list of ERC-20 tokens for a given address on a specified chain.
  * @param address - The address to query.
@@ -32,15 +33,15 @@ export async function getERC20Tokens(address: string, chain: string): Promise<To
     throw new Error('Error fetching token transactions from Etherscan');
   }
 
-  const tokenTransactions = response.data.result;
+  const tokenTransactions: any[] = response.data.result;
 
   // Extract unique token contracts
-  const tokenContracts = [...new Set(tokenTransactions.map((tx: any) => tx.contractAddress))];
+  const tokenContracts: string[] = [...new Set(tokenTransactions.map((tx) => tx.contractAddress))];
 
   // Fetch token details
   const tokenDetailsPromises = tokenContracts.map(async (contractAddress): Promise<TokenData | null> => {
     const contract: ethers.Contract = new ethers.Contract(
-      contractAddress as string,
+      contractAddress,
       [
         'function name() view returns (string)',
         'function symbol() view returns (string)',

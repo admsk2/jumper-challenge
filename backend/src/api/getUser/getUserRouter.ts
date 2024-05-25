@@ -21,7 +21,7 @@ export const getUserRouter: Router = (() => {
 
   router.get('/', (req: Request, res: Response) => {
     try {
-      const address = (req.session as any).siwe?.data.address;
+      const address: string = (req.session as any).siwe?.data.address;
       if (address) {
         const serviceResponse = new ServiceResponse<string>(
           ResponseStatus.Success,

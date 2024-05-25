@@ -8,7 +8,7 @@ import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse
 import { isValidEthereumAddress } from '@/common/utils/commonValidation';
 import { getERC20Tokens } from '@/common/utils/getAddressBalances';
 import { handleServiceResponse } from '@/common/utils/httpHandlers';
-import { TokenData } from '@/types/TokenTypes';
+import { TokenData } from '@/types/tokenTypes';
 
 export const getBalancesRegistry = new OpenAPIRegistry();
 

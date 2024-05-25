@@ -21,7 +21,10 @@ export const logoutRouter: Router = (() => {
 
   router.get('/', (req: Request, res: Response) => {
     try {
-      req.session.destroy(() => {
+      req.session.destroy((err) => {
+        if (err) {
+          throw err;
+        }
         const serviceResponse = new ServiceResponse<null>(
           ResponseStatus.Success,
           'User logged out successfully',
