@@ -45,8 +45,12 @@ export default function Home() {
         height={"100vh"}
       >
         <Grid
-          xs={6}
-          md={5}
+          xs={10}
+          sm={10}
+          md={7}
+          lg={7}
+          xl={5}
+          
         >
           <Typography variant="h1" lineHeight={'0.9'} fontWeight={900} textTransform={'uppercase'} mb={3}>
             Join the<br/>
@@ -67,14 +71,17 @@ export default function Home() {
           <Typography variant="body1" fontSize={'1.15rem'} mb={4} color={'gray'}>
             You are just one click away. Connect your wallet to get started.
           </Typography>
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} mb={4}>
             <ConnectButton />
             <SignInButton onError={(message: string) => handleOpen(message)} />
           </Stack>
         </Grid>
         <Grid
-          xs={6}
-          md={5}
+          xs={10}
+          sm={10}
+          md={4}
+          lg={3}
+          xl={5}
         >
           <Profile onError={(message: string) => handleOpen(message)} />
         </Grid>

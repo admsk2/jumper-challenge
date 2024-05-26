@@ -11,3 +11,11 @@ export function formatEthereumAddress(address: string): string {
   const end = address.slice(-5);
   return `${start}...${end}`;
 }
+
+// Function to round a number to four decimal places
+// @param {number} num - Number to round
+// @returns {number} - Number rounded to four decimal places
+
+export function roundToFourDecimals(num: number): number {
+  return Math.round(num * 10000) / 10000;
+}

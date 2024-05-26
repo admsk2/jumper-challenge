@@ -19,4 +19,25 @@ const theme = createTheme({
   },
 });
 
+theme.typography.h1 = {
+    fontSize: '5rem',
+};
+
+theme.typography.h1[theme.breakpoints.down('lg')] = {
+    fontSize: '4rem',
+};
+
+theme.typography.h1[theme.breakpoints.down('md')] = {
+    fontSize: '3rem',
+};
+
+theme.typography.h1[theme.breakpoints.down('sm')] = {
+    fontSize: '2rem',
+};
+
+theme.typography.body1[theme.breakpoints.down('sm')] = {
+    fontSize: '1rem',
+};
+
+
 export default theme;

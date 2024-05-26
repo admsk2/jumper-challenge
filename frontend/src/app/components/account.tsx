@@ -1,15 +1,8 @@
-"use client";
-
-// next imports
 import { useState } from "react";
-
-// web3 imports
 import {
   useAccountModal,
   useChainModal,
 } from "@rainbow-me/rainbowkit";
-
-// ui components
 import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
 import Fab from '@mui/material/Fab';
@@ -18,24 +11,33 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
 import WalletIcon from '@mui/icons-material/Wallet';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { roundToFourDecimals } from "@/lib/utils";
 
-export const Account = ({ tokensList }: { tokensList: any[] }) => {
-  // web3 hooks
+// Define the type for a token
+interface Token {
+  name: string;
+  symbol: string;
+  balance: number;
+}
+
+interface AccountProps {
+  tokensList: Token[];
+}
+
+export const Account = ({ tokensList }: AccountProps) => {
   const { openAccountModal } = useAccountModal();
   const { openChainModal } = useChainModal();
-
-  // internal state
   const [open, setOpen] = useState(false);
 
-  // custom handler
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
-  // default view
   return (
     <>
     <Stack direction="row" spacing={2}>
@@ -57,18 +59,24 @@ export const Account = ({ tokensList }: { tokensList: any[] }) => {
     </Stack>
     <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
       <Box
-        sx={{ width: 250 }}
+        sx={{ width: 300 }}
         role="presentation"
         onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
         <List>
-          {tokensList.map((token: any, index: any) => (
+          {tokensList.map((token: Token, index: number) => (
             <ListItem key={index} disablePadding>
               <ListItemButton>
-                <ListItemText primary={token.name} />
-                <ListItemText primary={token.symbol} />
-                <ListItemText primary={token.balance} />
+                <ListItemAvatar>
+                  <Avatar
+                    src={`/icons/${token.symbol}.png`}
+                    sx={{ 'fontSize': '9px', 'fontWeight': '600', 'backgroundColor': 'black'}}
+                  >
+                  {token.symbol}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={token.name} secondary={roundToFourDecimals(token.balance)} sx={{ 'textAlign': 'right' }} />
               </ListItemButton>
             </ListItem>
           ))}

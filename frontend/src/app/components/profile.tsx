@@ -73,16 +73,16 @@ export default function Profile({ onError }: { onError: any }) {
   // default view
   return (
     <Grid container>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={10} sm={10} md={8} lg={10} xl={6}>
         <Card>
           <CardContent>
             {address ?
               <Tooltip title={address}>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
                   {formatEthereumAddress(address)}{ens.data && `• (${ens.data})`}
                 </Typography>
               </Tooltip> :
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
                 -
               </Typography>
             }
