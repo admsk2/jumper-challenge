@@ -73,7 +73,7 @@ export default function Profile({ onError }: { onError: any }) {
   // default view
   return (
     <Grid container>
-      <Grid item xs={10} sm={10} md={8} lg={10} xl={6}>
+      <Grid item xs={10} sm={10} md={12} lg={12} xl={12}>
         <Card>
           <CardContent>
             {address ?

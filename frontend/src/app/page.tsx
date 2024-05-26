@@ -12,6 +12,7 @@ import ConnectButton from "./components/button";
 import SignInButton from "./components/signin";
 import Profile from "./components/profile";
 import { useState } from 'react';
+import BasicTable from './components/leaderboard';
 
 export default function Home() {
   // internal state
@@ -47,10 +48,10 @@ export default function Home() {
         <Grid
           xs={10}
           sm={10}
-          md={7}
-          lg={7}
+          md={6}
+          lg={6}
           xl={5}
-          
+          item
         >
           <Typography variant="h1" lineHeight={'0.9'} fontWeight={900} textTransform={'uppercase'} mb={3}>
             Join the<br/>
@@ -79,11 +80,22 @@ export default function Home() {
         <Grid
           xs={10}
           sm={10}
-          md={4}
+          md={3}
           lg={3}
-          xl={5}
+          xl={2}
+          item
         >
           <Profile onError={(message: string) => handleOpen(message)} />
+        </Grid>
+        <Grid
+          xs={10}
+          sm={10}
+          md={3}
+          lg={3}
+          xl={4}
+          item
+        >
+          <BasicTable onError={(message: string) => handleOpen(message)} />
         </Grid>
       </Grid>
       <Snackbar open={state.open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
