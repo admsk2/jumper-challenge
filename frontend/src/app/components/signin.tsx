@@ -85,6 +85,7 @@ export default function SignInButton({ onError }: { onError: (error: string) => 
     // pre-fetch nonce for SIWE message and user
     useEffect(() => {
         const handler = async () => {
+            if (!address) return
             try {
                 // nonce
                 const nonceRes = await fetch('http://localhost:8080/nonce', {
@@ -96,7 +97,6 @@ export default function SignInButton({ onError }: { onError: (error: string) => 
                 if (!nonceResJson.success) {
                     onError(nonceResJson.responseObject)
                 }
-
                 const nonceValue = await nonceResJson.responseObject
                 setNonce(nonceValue)
 
@@ -121,30 +121,29 @@ export default function SignInButton({ onError }: { onError: (error: string) => 
                 setLoading(false)
             } catch (error) {
                 onError((error as any).message)
+                setLoading(false)
             }
         }
         // 1. page loads
         handler()
     }, [verified, address])
 
+    if (!address) return <></>
+
     if (loading) {
         return <Button disabled variant="contained" endIcon={<FingerprintIcon />}>Fetching...</Button>
     }
 
-    if (isConnected && chain) {
-        return (
-            <>
-                {authenticated ?
-                    <>
-                    <Button variant="contained" disabled endIcon={<VerifiedUserIcon />}>Authenticated</Button>
-                    <Button onClick={signOut}>Log Out</Button>
-                    </>
-                    :
-                    <Button variant="contained" onClick={signIn} endIcon={<FingerprintIcon />}>Log In</Button>
-                }
-            </>
-        )
-    }
-
-    return <></>
+    return (
+        <>
+            {authenticated ?
+                <>
+                <Button variant="contained" disabled endIcon={<VerifiedUserIcon />}>Authenticated</Button>
+                <Button onClick={signOut}>Log Out</Button>
+                </>
+                :
+                <Button variant="contained" onClick={signIn} endIcon={<FingerprintIcon />}>Log In</Button>
+            }
+        </>
+    )
 };

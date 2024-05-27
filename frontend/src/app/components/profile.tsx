@@ -43,6 +43,8 @@ export default function Profile({ onError }: { onError: (error: string) => void 
     const handler = async () => {
       if (!address) return;
       try {
+        // cleanup when account switches
+        setUserBalances(false);
         const response = await fetch(`http://localhost:8080/balances/${address}`);
         const responseJson = await response.json();
     
