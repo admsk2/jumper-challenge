@@ -1,11 +1,14 @@
 # Define script paths
 COMMAND_SCRIPT := ./scripts/run.sh
+COPY_ENV_SCRIPT := ./scripts/env.sh
 
 # Target to run the build command in both backend and frontend
 install:
 	@echo "Running 'install' in backend and frontend..."
 	@chmod +x $(COMMAND_SCRIPT)
+	@chmod +x $(COPY_ENV_SCRIPT)
 	@$(COMMAND_SCRIPT) install
+	@$(COPY_ENV_SCRIPT)
 
 # Target to run the build command in both backend and frontend
 build:

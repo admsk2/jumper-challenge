@@ -13,13 +13,13 @@ import Button from '@mui/material/Button';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 
-export default function SignInButton({ onError }: { onError: any }) {
+export default function SignInButton({ onError }: { onError: (error: string) => void }) {
     // account state
     const { isConnected, chain, address } = useAccount();
     // wagmi hook
     const { signMessageAsync } = useSignMessage()
     // internal state
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [nonce, setNonce] = useState<string | undefined>(undefined);
     const [verified, setVerified] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
@@ -76,38 +76,31 @@ export default function SignInButton({ onError }: { onError: any }) {
                 method: 'GET',
                 credentials: 'include',
             })
-            setAuthenticated(false)
-            setVerified(false)
             window.location.reload()
         } catch (error) {
             onError((error as any).message)
         }
     }
 
-    // pre-fetch nonce for SIWE message
+    // pre-fetch nonce for SIWE message and user
     useEffect(() => {
         const handler = async () => {
             try {
+                // nonce
                 const nonceRes = await fetch('http://localhost:8080/nonce', {
                     method: 'GET',
                     credentials: 'include',
                 })
                 const nonceResJson = await nonceRes.json()
+
+                if (!nonceResJson.success) {
+                    onError(nonceResJson.responseObject)
+                }
+
                 const nonceValue = await nonceResJson.responseObject
                 setNonce(nonceValue)
-            } catch (error) {
-                onError((error as any).message)
-            }
-        }
-        // 1. page loads
-        handler()
-    }, [])
 
-    // pre-fetch user
-    useEffect(() => {
-        const handler = async () => {
-            if (!verified) return
-            try {
+                // user
                 const userRes = await fetch('http://localhost:8080/user', {
                     method: 'GET',
                     credentials: 'include',
@@ -116,15 +109,16 @@ export default function SignInButton({ onError }: { onError: any }) {
                 if (userResJson.success) {
                     const authenticatedAddress = userResJson.responseObject
                     if (authenticatedAddress !== address) {
-                        onError('Error fetching user: User address mismatch')
+                        signOut()
                     } else {
                         setAuthenticated(true)
                     }
                 } else {
                     if (userResJson.statusCode !== 404) {
-                        onError(`Error fetching user: ${userResJson.message}`)
+                        onError(`Error fetching user: ${userResJson.responseObject}`)
                     }
                 }
+                setLoading(false)
             } catch (error) {
                 onError((error as any).message)
             }
@@ -134,7 +128,7 @@ export default function SignInButton({ onError }: { onError: any }) {
     }, [verified, address])
 
     if (loading) {
-        return <Button disabled variant="contained" endIcon={<FingerprintIcon />}>Logging In...</Button>
+        return <Button disabled variant="contained" endIcon={<FingerprintIcon />}>Fetching...</Button>
     }
 
     if (isConnected && chain) {

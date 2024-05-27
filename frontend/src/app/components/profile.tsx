@@ -22,12 +22,12 @@ import Grid from '@mui/material/Grid';
 import { Account } from "./account";
 import { formatEthereumAddress } from "@/lib/utils";
 
-export default function Profile({ onError }: { onError: any }) {
+export default function Profile({ onError }: { onError: (error: string) => void }) {
   // account state
   const { address, chain, isConnected } = useAccount();
 
   // internal state
-  const [userBalances, setUserBalances] = useState([]);
+  const [userBalances, setUserBalances] = useState(false);
 
   // web3 hooks
   const { data } = useBalance({
@@ -41,20 +41,21 @@ export default function Profile({ onError }: { onError: any }) {
   // custom hook
   useEffect(() => {
     const handler = async () => {
-      if (!address) return
+      if (!address) return;
       try {
-        const balancesRes = await fetch(`http://localhost:8080/balances/${address}`, {
-          method: 'GET',
-          credentials: 'include',
-        })
-        const balancesResJson = await balancesRes.json()
-        const userBalancesRaw = await balancesResJson.responseObject
-        const userBalancesFormatted = JSON.parse(userBalancesRaw)
-        setUserBalances(userBalancesFormatted)
+        const response = await fetch(`http://localhost:8080/balances/${address}`);
+        const responseJson = await response.json();
+    
+        if (!responseJson.success) {
+          onError(responseJson.responseObject);
+          return;
+        }
+    
+        setUserBalances(JSON.parse(responseJson.responseObject));
       } catch (error) {
-        onError('Error fetching balances. Tokens list not available.')
+        onError('Error fetching balances. Tokens list not available.');
       }
-    }
+    };
     // 1. page loads
     handler()
 }, [address])
@@ -62,10 +63,10 @@ export default function Profile({ onError }: { onError: any }) {
   // state machine for connection
   if (!isConnected) {
     return (
-      <Stack spacing={1} sx={{ width: 350 }}>
-        <Skeleton variant="rectangular" width={350} height={200} />
-        <Skeleton variant="rectangular" width={350} height={20} />
+      <Stack spacing={1} sx={{ width: 250 }}>
+        <Skeleton variant="rectangular" width={250} height={150} />
         <Skeleton variant="rectangular" width={250} height={20} />
+        <Skeleton variant="rectangular" width={150} height={20} />
       </Stack>
     )
   }

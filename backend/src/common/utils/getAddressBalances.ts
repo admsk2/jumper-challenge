@@ -30,7 +30,12 @@ export async function getERC20Tokens(address: string, chain: string): Promise<To
   });
 
   if (response.data.status !== '1') {
-    throw new Error('Error fetching token transactions from Etherscan');
+    // i assume empty array is not an error
+    if (Array.isArray(response.data.result) && response.data.result.length === 0) {
+      return [];
+    }
+    const message = response.data.result ? `: ${response.data.result}` : '';
+    throw new Error(`Error fetching token transactions${message}`);
   }
 
   const tokenTransactions: any[] = response.data.result;

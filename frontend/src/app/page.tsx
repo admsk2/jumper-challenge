@@ -1,5 +1,8 @@
 "use client";
 
+// next imports
+import { useState } from 'react';
+
 // ui components
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -11,8 +14,7 @@ import Alert from '@mui/material/Alert';
 import ConnectButton from "./components/button";
 import SignInButton from "./components/signin";
 import Profile from "./components/profile";
-import { useState } from 'react';
-import BasicTable from './components/leaderboard';
+import Leaderboard from './components/leaderboard';
 
 export default function Home() {
   // internal state
@@ -48,8 +50,8 @@ export default function Home() {
         <Grid
           xs={10}
           sm={10}
-          md={6}
-          lg={6}
+          md={5}
+          lg={5}
           xl={5}
           item
         >
@@ -82,7 +84,7 @@ export default function Home() {
           sm={10}
           md={3}
           lg={3}
-          xl={2}
+          xl={3}
           item
         >
           <Profile onError={(message: string) => handleOpen(message)} />
@@ -92,10 +94,10 @@ export default function Home() {
           sm={10}
           md={3}
           lg={3}
-          xl={4}
+          xl={3}
           item
         >
-          <BasicTable onError={(message: string) => handleOpen(message)} />
+          <Leaderboard onError={(message: string) => handleOpen(message)} />
         </Grid>
       </Grid>
       <Snackbar open={state.open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
