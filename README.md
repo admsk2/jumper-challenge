@@ -43,4 +43,5 @@ Make sure `.env` file in backend is setup correctly.
 
 I have used wagmi with rainbow-kit for wallet connection. Authoriziation aka login with signature is done in a wagmi/next.js way utilizing sessions on the backend.<br>If account should be persistent i would lean towards MongoDB with users collection.<br>
 I assumed user does not have to be authorized in order to fetch tokens, so these are available for any connected wallet. Etherscan API is used for fetching token data. .env require `ETHERSCAN_API_KEY` to be set, if not -- frontend with throw an alert in bottom right corner (in case of any other error too).<br>
-I chose (mostly for fun) IndexedDB for data storage for the leaderboard. I have used `dexie` library for this purpose which wraps browser build-in functions with react hooks.<br>
+I chose (mostly for fun) IndexedDB for data storage for the leaderboard. I have used `dexie` library for this purpose which wraps browser build-in functions with react hooks.<br><br>
+The missing part in the task are tests for endpoints utilizing req.session. Seems that there is no feasible way with `vitest` to mock session object. In real world scenario i would probably consider other testing suites. I will continue working on it in the meantime.<br>
