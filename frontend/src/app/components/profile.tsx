@@ -41,10 +41,11 @@ export default function Profile({ onError }: { onError: (error: string) => void 
   // custom hook
   useEffect(() => {
     const handler = async () => {
-      if (!address) return;
+      // cleanup when account or network switches
+      setUserBalances([]);
+      const chainId = chain?.id
+      if (!address || chainId !== 1) return
       try {
-        // cleanup when account switches
-        setUserBalances([]);
         const response = await fetch(`http://localhost:8080/balances/${address}`);
         const responseJson = await response.json();
     
@@ -60,7 +61,7 @@ export default function Profile({ onError }: { onError: (error: string) => void 
     };
     // 1. page loads
     handler()
-}, [address])
+}, [address, chain])
 
   // state machine for connection
   if (!isConnected) {
