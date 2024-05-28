@@ -27,7 +27,7 @@ export default function Profile({ onError }: { onError: (error: string) => void 
   const { address, chain, isConnected } = useAccount();
 
   // internal state
-  const [userBalances, setUserBalances] = useState(false);
+  const [userBalances, setUserBalances] = useState([]);
 
   // web3 hooks
   const { data } = useBalance({
@@ -44,7 +44,7 @@ export default function Profile({ onError }: { onError: (error: string) => void 
       if (!address) return;
       try {
         // cleanup when account switches
-        setUserBalances(false);
+        setUserBalances([]);
         const response = await fetch(`http://localhost:8080/balances/${address}`);
         const responseJson = await response.json();
     

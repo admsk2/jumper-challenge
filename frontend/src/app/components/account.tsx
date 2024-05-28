@@ -50,15 +50,9 @@ export const Account = ({ tokensList }: AccountProps) => {
   return (
     <>
     <Stack direction="row" spacing={2}>
-      {tokensList ?
       <Fab size="small" aria-label="tokens" onClick={toggleDrawer(true)} sx={{ 'boxShadow': 'none' }}>
         <AttachMoneyIcon />
       </Fab>
-      :
-      <Fab disabled size="small" aria-label="tokens" sx={{ 'boxShadow': 'none' }}>
-        <AttachMoneyIcon />
-      </Fab>
-      }
       <Fab size="small" aria-label="wallet" onClick={async () => openAccountModal?.()} sx={{ 'boxShadow': 'none' }}>
         <WalletIcon />
       </Fab>
